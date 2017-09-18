@@ -1,0 +1,2 @@
+hw2
+-DCATKIN_DEVEL_PREFIX=/home/ap0c/workspace/devel -DCMAKE_INSTALL_PREFIX=/home/ap0c/workspace/install -G Unix Makefiles
