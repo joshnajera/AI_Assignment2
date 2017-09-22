@@ -3,6 +3,9 @@
 #include <sstream>
 #include <iostream>
 #include <stdio.h>
+#include <set>
+
+using namespace std;
 
 int main(int argc, char **argv){
 
@@ -19,19 +22,50 @@ int main(int argc, char **argv){
 
 
 	//	Getting input
-	char input[100];
-	std::cout<<"Enter a set of integers: "<<std::endl;
-	std::cin.getline(input, sizeof(input));
-	ROS_INFO("Publishing number list of: %s", input);
+	while(true){
+		bool valueError = false, countError = false;
+		char input[100];
+		char * input_integer;
+		int count = 0;
+		set<int> values;
 
-	
-	//	Splitting off space
-	char * input_integer;
-	input_integer = strtok (input," ");
-	while(input_integer != NULL) {
-		//	Place each number into the message's data
-		msg.data.push_back(atoi(input_integer));
-		input_integer = strtok(NULL," ");
+		std::cout<<"Enter a set of integers: "<<std::endl;
+		std::cin.getline(input, sizeof(input));
+
+		
+		//	Splitting off space
+		input_integer = strtok (input," ");
+		while (input_integer != NULL) {
+			//	Place each number into the message's data
+			int value = atoi(input_integer);
+			if (value <= 100 && count < 5){
+				values.insert(value);
+				count++;
+				input_integer = strtok(NULL," ");
+				continue;
+			}
+			else if(value > 100)
+				valueError = true;
+			else
+				countError = true;
+			break;
+
+		}
+
+		if (valueError) {
+			ROS_INFO("Cannot have a value greater than 100.");
+			continue;
+		}
+		else if(countError){
+			ROS_INFO("Cannot have more than 5 entries.");
+			continue;
+		}
+
+		for(set<int>::iterator it = values.begin(); it != values.end(); it++) {
+				msg.data.push_back(*it);
+		}
+		ROS_INFO("Sending...");
+		break;
 	}
 
 
@@ -42,7 +76,6 @@ int main(int argc, char **argv){
 		//msg.data = ss.str();		//  Converts to string and 
 						//  stores it in message obj
 
-		ROS_INFO("Sending...");
 		pub.publish(msg);	//  Publishes to outgoing msg queue
 		loop_rate.sleep();	//  Sleeps based on loop_rate
 	}

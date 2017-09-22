@@ -12,9 +12,10 @@ void msgCallback(const std_msgs::Int32MultiArray::ConstPtr& msg) {
 			it != msg->data.end(); ++it){
 		int output = *it;
 		sum += output;	//	Sum them
+		ROS_INFO("Number added:%i\tCurrent Total:%i", output, sum);
 	}
 	//	Display
-	ROS_INFO("The sum of the integers: [%i]", sum);
+	ROS_INFO("The sum of the integers: %i", sum);
 	ROS_INFO("Now exiting...");
 	exit(0);
 }
